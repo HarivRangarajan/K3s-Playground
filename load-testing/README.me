@@ -1,0 +1,11 @@
+# This directory handles load-testing according to the given NASA.csv file
+- Uses Grafana's K6 library: https://grafana.com/docs/k6/latest/
+- a total of MAX_REQUESTS virtual users (VUs) will be spun up
+- every second, they will have a request_count / MAX_REQUESTS chance of sending out a HTTP request_count
+- therefore, the request rate every second matches each row (minute) of the csv file in expectation
+
+Instructions:
+Simply run
+`k6 run ./load-testing/nasa.js`
+
+If you wish to test more rows (default: 10), change the DURATION global variable in nasa.js
