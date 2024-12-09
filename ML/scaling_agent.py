@@ -27,7 +27,7 @@ class ScalingAgent:
 
         # Configure Prometheus client with internal cluster DNS
         self.prom = PrometheusConnect(
-            url="http://prometheus-deployment.monitoring.svc.cluster.local:9090",
+            url="http://prometheus-service.monitoring.svc.cluster.local:9090",
             disable_ssl=True
         )
 
@@ -83,29 +83,29 @@ class ScalingAgent:
 
         while True:
             try:
-                # # Get current metrics (requests per minute)
-                # current_requests = self.get_current_metrics()
-                # self.request_history.append(current_requests)
+                # Get current metrics (requests per minute)
+                current_requests = self.get_current_metrics()
+                self.request_history.append(current_requests)
 
-                # # Wait until we have enough history
-                # if len(self.request_history) == 10:
-                #     # Convert to numpy array and ensure float type
-                #     request_history_array = np.array(list(self.request_history), dtype=float)
-                #     logger.info(f"Request history (last 10 minutes): {request_history_array}")
+                # Wait until we have enough history
+                if len(self.request_history) == 10:
+                    # Convert to numpy array and ensure float type
+                    request_history_array = np.array(list(self.request_history), dtype=float)
+                    logger.info(f"Request history (last 10 minutes): {request_history_array}")
 
-                #     # Get prediction from model
-                #     needed_replicas = self.predictor.predict(request_history_array)
-                #     logger.info(f"Model prediction: {needed_replicas} replicas needed")
+                    # Get prediction from model
+                    needed_replicas = self.predictor.predict(request_history_array)
+                    logger.info(f"Model prediction: {needed_replicas} replicas needed")
 
-                #     # Scale the deployment
-                #     self.scale_deployment("imdb", "imdb", needed_replicas)
-                # else:
-                #     logger.info(f"Building history: {len(self.request_history)}/10 minutes")
+                    # Scale the deployment
+                    self.scale_deployment("imdb", "imdb", needed_replicas)
+                else:
+                    logger.info(f"Building history: {len(self.request_history)}/10 minutes")
 
-                ### Testing the pod scaling ###
-                needed_replicas = 7 ## test the scaling agent without the model predictions
-                logger.info(f"Test: {needed_replicas} replicas needed")
-                self.scale_deployment("imdb", "imdb", needed_replicas)
+                # ### Testing the pod scaling ###
+                # needed_replicas = 7 ## test the scaling agent without the model predictions
+                # logger.info(f"Test: {needed_replicas} replicas needed")
+                # self.scale_deployment("imdb", "imdb", needed_replicas)
 
                 # Wait for 1 minute before next check
                 logger.info("Waiting 1 minute before next check")
