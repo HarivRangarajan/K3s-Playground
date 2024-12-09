@@ -29,10 +29,10 @@ class RequestPredictor:
         predicted_requests = self.model.predict(X)[0]
 
         # Convert predicted requests to number of replicas needed
-        # # Assuming each replica can handle 100 requests per minute
-        # needed_replicas = max(1, int(np.ceil(predicted_requests / 100)))
+        # Assuming each replica can handle 100 requests per minute
+        needed_replicas = max(1, int(np.ceil(predicted_requests / 100)))
 
-        # Assuming each replica can handle 50 requests per minute
-        needed_replicas = max(1, int(np.ceil(predicted_requests / 50)))
+        # # Assuming each replica can handle 50 requests per minute
+        # needed_replicas = max(1, int(np.ceil(predicted_requests / 50)))
 
         return needed_replicas
