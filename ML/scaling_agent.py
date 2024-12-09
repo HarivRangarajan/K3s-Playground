@@ -25,9 +25,9 @@ class ScalingAgent:
         config.load_incluster_config()
         self.apps_v1 = client.AppsV1Api()
         
-        # Configure Prometheus client with correct port
+        # Configure Prometheus client with internal cluster DNS
         self.prom = PrometheusConnect(
-            url="http://prometheus-deployment.monitoring:30000",
+            url="http://prometheus-deployment.monitoring.svc.cluster.local:9090",
             disable_ssl=True
         )
         
