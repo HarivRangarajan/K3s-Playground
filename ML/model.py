@@ -6,7 +6,7 @@ class RequestPredictor:
     def __init__(self):
         self.seq_length = 10
         # Load the trained model using joblib
-        self.model = joblib.load('/app/model/linear_model.joblib')
+        self.model = joblib.load('/app/model/linear_model.pkl')
         
     def predict(self, recent_requests):
         """
