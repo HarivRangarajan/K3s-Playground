@@ -25,8 +25,11 @@ class ScalingAgent:
         config.load_incluster_config()
         self.apps_v1 = client.AppsV1Api()
         
-        # Configure Prometheus client
-        self.prom = PrometheusConnect(url="http://prometheus-server.monitoring:9090", disable_ssl=True)
+        # Configure Prometheus client with correct port
+        self.prom = PrometheusConnect(
+            url="http://prometheus-deployment.monitoring:30000",
+            disable_ssl=True
+        )
         
         logger.info("Scaling agent initialized successfully")
     
