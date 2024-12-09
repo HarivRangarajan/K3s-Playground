@@ -26,7 +26,8 @@ load.shift();
 load.pop();
 
 // spin up a number of Virtual Users equal to our maximum load (make this much smaller in local testing to save compute :> )
-const MAX_USERS = Math.max(...load);
+//const MAX_USERS = Math.max(...load);
+const MAX_USERS = 1;
 
 // which row of the csv file we are currently simulating (starts at 0)
 var row = 0;
