@@ -27,7 +27,7 @@ class ScalingAgent:
 
         # Configure Prometheus client with internal cluster DNS
         self.prom = PrometheusConnect(
-            url="http://prometheus-service.monitoring.svc.cluster.local:9090",
+            url="http://prometheus-service.monitoring.svc.cluster.local:8080",
             disable_ssl=True
         )
 
