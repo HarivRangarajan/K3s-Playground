@@ -87,10 +87,10 @@ class ScalingAgent:
         try:
             plt.figure(figsize=(12, 6))
             plt.plot(self.timestamps, self.replicas, marker='o')
-            plt.gcf().autofmt_xdate()  # Rotate and align the tick labels
             plt.title('Needed Replicas Over Time')
-            plt.xlabel('Time')
+            plt.xlabel('Time (minutes)')
             plt.ylabel('Number of Replicas')
+            plt.xticks(self.timestamps)  # Ensure x-ticks match the timestamps
             plt.grid(True)
             plt.tight_layout()
             plt.savefig('replicas_over_time.png')
@@ -108,6 +108,7 @@ class ScalingAgent:
                 # Get current metrics (requests per minute)
                 current_requests = self.get_current_metrics()
                 self.request_history.append(current_requests)
+                minute_counter = 1
 
                 # Wait until we have enough history
                 if len(self.request_history) == 10:
@@ -119,10 +120,10 @@ class ScalingAgent:
                     needed_replicas = self.predictor.predict(request_history_array)
                     logger.info(f"Model prediction: {needed_replicas} replicas needed")
 
-                    current_time = datetime.now()
-
-                    self.timestamps.append(current_time)
+                    self.timestamps.append(minute_counter)
                     self.replicas.append(needed_replicas)
+
+                    minute_counter += 1
 
                     # Scale the deployment
                     self.scale_deployment("imdb", "imdb", needed_replicas)
