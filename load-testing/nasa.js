@@ -4,7 +4,7 @@ import papaparse from 'https://jslib.k6.io/papaparse/5.1.1/index.js';
 import { SharedArray } from "k6/data";
 
 // EDIT this to change how many rows to simulate
-const DURATION = '45m' // how many rows of the CSV file you want to simulate, where each row takes 1 second
+const DURATION = '10m' // how many rows of the CSV file you want to simulate, where each row takes 1 second
 
 // import and parse the NASA data csv file
 const load = [];
