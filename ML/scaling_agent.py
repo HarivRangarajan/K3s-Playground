@@ -31,16 +31,18 @@ class ScalingAgent:
         logger.info("Scaling agent initialized successfully")
     
     def get_current_metrics(self):
-        """Get the average request rate over the last 5 minutes"""
+        """Get the request rate for the last minute"""
         try:
-            # Query average request rate over 5 minutes
-            query = 'avg_over_time(sum(rate(ImdbAppDuration_count[5m]))[5m:])'
+            # Query last minute's request rate
+            query = 'sum(rate(ImdbAppDuration_count[1m]))'
             result = self.prom.custom_query(query)
             
             if result and result[0]['value']:
                 request_rate = float(result[0]['value'][1])
-                logger.info(f"Current 5-minute average request rate: {request_rate:.2f} requests/sec")
-                return request_rate
+                # Convert to requests per minute
+                requests_per_minute = request_rate * 60
+                logger.info(f"Current request rate: {requests_per_minute:.2f} requests/minute")
+                return requests_per_minute
             
             logger.warning("No metrics received from Prometheus")
             return 0
@@ -78,15 +80,15 @@ class ScalingAgent:
         
         while True:
             try:
-                # Get current metrics
+                # Get current metrics (requests per minute)
                 current_requests = self.get_current_metrics()
                 self.request_history.append(current_requests)
                 
                 # Wait until we have enough history
                 if len(self.request_history) == 10:
-                    # Convert request history to numpy array for prediction
-                    request_history_array = np.array(list(self.request_history))
-                    logger.info(f"Request history (last 10 intervals): {request_history_array}")
+                    # Convert to numpy array and ensure float type
+                    request_history_array = np.array(list(self.request_history), dtype=float)
+                    logger.info(f"Request history (last 10 minutes): {request_history_array}")
                     
                     # Get prediction from model
                     needed_replicas = self.predictor.predict(request_history_array)
@@ -95,15 +97,15 @@ class ScalingAgent:
                     # Scale the deployment
                     self.scale_deployment("imdb", "imdb", needed_replicas)
                 else:
-                    logger.info(f"Building history: {len(self.request_history)}/10 intervals")
+                    logger.info(f"Building history: {len(self.request_history)}/10 minutes")
                 
-                # Wait for 5 minutes before next check
-                logger.info("Waiting 5 minutes before next scaling check")
-                time.sleep(300)
+                # Wait for 1 minute before next check
+                logger.info("Waiting 1 minute before next check")
+                time.sleep(60)
                 
             except Exception as e:
                 logger.error(f"Error in scaling loop: {e}")
-                time.sleep(300)
+                time.sleep(60)
 
 if __name__ == "__main__":
     try:
